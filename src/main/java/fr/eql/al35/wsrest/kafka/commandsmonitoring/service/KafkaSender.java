@@ -4,20 +4,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import fr.eql.al35.wsrest.kafka.commandsmonitoring.dto.Command;
+import fr.eql.al35.wsrest.kafka.commandsmonitoring.iservice.IKafkaSender;
+
 @Service
-public class KafkaSender {
+public class KafkaSender implements IKafkaSender {
 
 	@Autowired
 	private KafkaTemplate<String, String> kafkaTemplate;
 
-	String kafkaTopic = "java_in_use_topic";
+	String kafkaTopic = "cmd_mathilda";
 
+	@Override
 	public void sendMessage(String message) {
 		kafkaTemplate.send(kafkaTopic, message);
 	}
-
-	/*
-	 * fonctionne, envoie la commande en string : pas utilisée pour l'instant
+	
+	@Override
 	public void sendCommand(Command command) {
 		ObjectMapper obj = new ObjectMapper();
 		obj.registerModule(new JavaTimeModule());
@@ -30,7 +38,7 @@ public class KafkaSender {
 			e.printStackTrace();
 		}
 	}
-	 */
+
 
 
 	/* probleme localdateTime
@@ -49,16 +57,4 @@ public class KafkaSender {
 	 * 
 	 */
 
-	/*
-	@SuppressWarnings("deprecation")
-	public void listen() {
-		System.out.println(KAFKA_TOPIC);
-		System.out.println(Collections.singletonList(KAFKA_TOPIC).toString());
-		kafkaConsumer.subscribe(Collections.singletonList(KAFKA_TOPIC));
-		ConsumerRecords<Long, String> records = kafkaConsumer.poll(1000);
-	    for (ConsumerRecord<Long, String> record : records) {
-	      System.out.println(record.offset() + ": " + record.value());
-	  }
-	}
-	 */
 }
